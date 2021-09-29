@@ -7,6 +7,8 @@ export class Thing {
         this.src = src;
     }
 
+    update(ratio, keyboard, mouse) {}
+
     draw(ctx, drawSprite) {
         if (this.src == null) {return}
         drawSprite[this.src](this.x, this.y);

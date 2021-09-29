@@ -22,12 +22,21 @@ ctx.fillText("loading", (canvas.width / 2) - (ctx.measureText("loading").width /
 let preloaded = 0;
 
 let sprites = {
-    explosion: new Image()
+    "cat": new Image(),
+    "mouse": new Image(),
+    "planks": new Image(),
+    "crate": new Image(),
+    "input": new Image()
 }
 
 const drawSprite = {
-    explosion: function(i, x, y) {ctx.drawImage(sprites.explosion, 32 * i, 0, 32, 32, Math.floor(x), Math.floor(y), 32, 32)}
-};
+    "cat_idle": function(i, x, y) {ctx.drawImage(sprites.cat, 42 + (42 * i), 0, 38, 30, x, y + 4, 38, 30)},
+    "cat_sit": function(i, x, y) {ctx.drawImage(sprites.cat, i == 0 ? 0 : 42 * 3, 0, 38, 30, x, y + 4, 38, 30)},
+    "cat_walk": function(i, x, y) {ctx.drawImage(sprites.cat, 44 * i, 35, 40, 30, x, y + 4, 40, 30)},
+    "mouse": function(x, y) {ctx.drawImage(sprites.mouse, x, y)},
+    "planks": function(x, y) {ctx.drawImage(sprites.planks, x, y)},
+    "crate": function(x, y) {ctx.drawImage(sprites.crate, x, y)}
+}
 
 function preload_success() {
     preloaded += 1;
@@ -38,8 +47,16 @@ function preload_success() {
     }
 }
 
-sprites.explosion.addEventListener("load", preload_success)
-sprites.explosion.src = "assets/explosion.png";
+sprites.cat.addEventListener("load", preload_success)
+sprites.cat.src = "assets/cat.png";
+sprites.mouse.addEventListener("load", preload_success)
+sprites.mouse.src = "assets/mouse.png";
+sprites.planks.addEventListener("load", preload_success)
+sprites.planks.src = "assets/planks.png";
+sprites.crate.addEventListener("load", preload_success)
+sprites.crate.src = "assets/crate.png";
+sprites.input.addEventListener("load", preload_success)
+sprites.input.src = "assets/input.png";
 
 
 function pauseGame() {
