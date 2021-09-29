@@ -23,6 +23,7 @@ export class Cat extends Thing {
     }
 
     draw(ctx, drawSprite) {
+        drawSprite.planks(this.x, this.y);
         this.states[this.state].draw(ctx, drawSprite);
     }
 }

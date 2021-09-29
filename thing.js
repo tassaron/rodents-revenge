@@ -46,12 +46,13 @@ export class ClickableThing extends Thing {
     constructor(x, y, width, height, src=null) {
         super(x, y, width, height, src);
         this.cooldown = 0.0;
+        this.delay = 30.0;
     }
 
     update(ratio, keyboard, mouse, func=this.leftClicked, self=this) {
         if (mouse.leftClick && this.cooldown == 0.0 && this.collides(mouse)) {
             func(self);
-            this.cooldown = 30.0;
+            this.cooldown = this.delay;
         } else if (this.cooldown < 0.0) {
             this.cooldown = 0.0;
         } else if (this.cooldown > 0.0) {
@@ -67,7 +68,7 @@ export class ClickableThing extends Thing {
     leftClicked() {
         console.log("clicked");
     }
-    
+
     collides(other) {
         return (this.x + this.width > other.x && this.x < other.x + other.width && other.y + other.height > this.y && other.y < this.y + this.height);
     }
