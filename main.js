@@ -35,7 +35,9 @@ const drawSprite = {
     "cat_walk": function(i, x, y) {ctx.drawImage(sprites.cat, 44 * i, 35, 40, 30, x, y + 4, 40, 30)},
     "mouse": function(x, y) {ctx.drawImage(sprites.mouse, x, y)},
     "planks": function(x, y) {ctx.drawImage(sprites.planks, x, y)},
-    "crate": function(x, y) {ctx.drawImage(sprites.crate, x, y)}
+    "crate": function(x, y) {ctx.drawImage(sprites.crate, x, y)},
+    "dpad_left": function(x, y) {ctx.drawImage(sprites.input, 0, 90, 90, 100, x, y, 90, 100)},
+    "dpad_down": function(x, y) {ctx.drawImage(sprites.input, 90, 90, 90, 100, x, y, 90, 100)}
 }
 
 function preload_success() {

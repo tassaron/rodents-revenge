@@ -8,6 +8,8 @@ export class Grid {
         this.cols = cols;
         this.rows = rows;
         this.gridsize = gridsize;
+        this.width = cols * gridsize;
+        this.height = rows * gridsize;
         this._grid = arrayOfLength(rows);
         for (let y = 0; y < this.rows; y++) {
             this._grid[y] = [];
