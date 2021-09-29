@@ -6,7 +6,6 @@ export class WorldScene {
     constructor(game) {
         this.game = game;
         this.grid = new WorldGrid(game);
-        this.grid._grid[0][0] = new Cat(1, 1);
         this.dpad = new Dpad(this.grid, game.ctx.canvas.width / 2, this.grid.height);
     }
 

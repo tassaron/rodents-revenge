@@ -5,3 +5,5 @@
 `crate.png` by devnewton <https://opengameart.org/content/crate-tile>
 
 `planks.png` by Lil Pie <https://opengameart.org/content/planks-floor>
+
+`input.png` by qubodup <https://opengameart.org/content/mouse-buttons-arrow-keys>
