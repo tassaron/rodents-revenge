@@ -9,8 +9,8 @@ body {
 }
 
 #game {
-    width: 874px;
-    height: 1074px;
+    width: 912px;
+    height: 1036px;
     position: relative;
     display: inline-block;
     border: 2px solid black;

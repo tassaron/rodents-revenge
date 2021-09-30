@@ -2,6 +2,8 @@
 
 `mouse.png` by peony <https://opengameart.org/content/cats-pixel-art>
 
+`cheese.png` also by peony <https://opengameart.org/content/breakfast-pixel-art>
+
 `crate.png` by devnewton <https://opengameart.org/content/crate-tile>
 
 `planks.png` by Lil Pie <https://opengameart.org/content/planks-floor>

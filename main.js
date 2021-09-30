@@ -24,6 +24,7 @@ let preloaded = 0;
 let sprites = {
     "cat": new Image(),
     "mouse": new Image(),
+    "cheese": new Image(),
     "planks": new Image(),
     "crate": new Image(),
     "input": new Image()
@@ -48,6 +49,7 @@ const drawSprite = {
             ctx.restore();
         },
     "mouse": function(x, y) {ctx.drawImage(sprites.mouse, x, y)},
+    "cheese": function(x, y) {ctx.drawImage(sprites.cheese, x, y)},
     "planks": function(x, y) {ctx.drawImage(sprites.planks, x, y)},
     "crate": function(x, y) {ctx.drawImage(sprites.crate, x, y)},
     "dpad_left": function(x, y) {ctx.drawImage(sprites.input, 0, 90, 90, 100, x, y, 90, 100)},
@@ -69,6 +71,8 @@ sprites.cat.addEventListener("load", preload_success)
 sprites.cat.src = "assets/cat.png";
 sprites.mouse.addEventListener("load", preload_success)
 sprites.mouse.src = "assets/mouse.png";
+sprites.cheese.addEventListener("load", preload_success)
+sprites.cheese.src = "assets/cheese.png";
 sprites.planks.addEventListener("load", preload_success)
 sprites.planks.src = "assets/planks.png";
 sprites.crate.addEventListener("load", preload_success)

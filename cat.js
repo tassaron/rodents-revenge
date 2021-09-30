@@ -8,32 +8,43 @@ export class Cat extends Thing {
             "idle": new IdleCat(this),
             "sitting": new SittingCat(this),
             "sat": new SatCat(this),
-            "walking": new WalkingCat(this)
+            "walking": new WalkingCat(this),
+            "cheese": new Cheese(this)
         }
         this.state = "idle";
         this.prevState = "walking";
-        this.idleCooldown = 0.0;
+        this.cooldown = 0.0;
         this.startingWalk = 0;
         this.facing = 1;
     }
 
     update(ratio, keyboard, mouse) {
+        if (this.state == "cheese") {return}
         if (this.state == "idle" && this.prevState != "idle") {
-            if (this.idleCooldown == 0.0) {
-                this.idleCooldown = 120.0;
+            if (this.cooldown == 0.0) {
+                this.cooldown = 120.0;
             } else {
-                this.idleCooldown -= ratio;
+                this.cooldown -= ratio;
             }
-            if (this.idleCooldown <= 0.0) {
+            if (this.cooldown <= 0.0) {
                 this.prevState = "idle";
             }
         } else if (this.state != "idle") {
             this.prevState = this.state;
         }
 
+        if (this.state == "sat") {
+            if (this.cooldown > 0.0) {
+                this.cooldown -= ratio;
+            } else {
+                this.state = "cheese";
+            }
+        }
+
         this.states[this.state].update(ratio, keyboard, mouse);
         if (this.state == "sitting" && this.states["sitting"].loops > 0) {
             this.state = "sat";
+            this.cooldown = 90.0 + ratio;
             this.states[this.state].update(ratio, keyboard, mouse);
         }
     }
@@ -78,6 +89,22 @@ class SittingCat extends AnimatedState {
     }
 }
 
+class WalkingCat extends AnimatedState {
+    constructor(cat) {
+        super(cat, "cat_walk_r", 6, 10);
+    }
+
+    update(ratio, keyboard, mouse) {
+        if (this.cat.facing == 1) {
+            this.src = "cat_walk_r";
+        } else {
+            this.src = "cat_walk";
+        }
+        super.update(ratio, keyboard, mouse);
+    }
+}
+
+
 class SatCat extends Thing {
     constructor(cat) {
         super(cat.x, cat.y, 38, 38, "cat_sit");
@@ -95,17 +122,14 @@ class SatCat extends Thing {
     }
 }
 
-class WalkingCat extends AnimatedState {
+class Cheese extends Thing {
     constructor(cat) {
-        super(cat, "cat_walk_r", 6, 10);
+        super(cat.x, cat.y, 38, 38, "cheese");
+        this.cat = cat;
     }
 
     update(ratio, keyboard, mouse) {
-        if (this.cat.facing == 1) {
-            this.src = "cat_walk_r";
-        } else {
-            this.src = "cat_walk";
-        }
-        super.update(ratio, keyboard, mouse);
+        this.x = this.cat.x;
+        this.y = this.cat.y;
     }
 }

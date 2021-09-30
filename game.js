@@ -9,6 +9,8 @@ export class Game {
     constructor(ctx) {
         this.paused = false;
         this.game_over = false;
+        this.level = 1;
+        this.score = 0;
         then = Date.now();
         this.ctx = ctx;
         this.allowUserInput = true;
