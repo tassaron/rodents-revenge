@@ -9,14 +9,17 @@ export class WorldGrid extends Grid {
     constructor(game) {
         super(0, 38, 23, 23, 38, Floor);
         this.game = game;
+        this.cooldown = 50.0;
         this.resetWorld();
     }
 
     resetWorld() {
         // Fills the worldgrid with initial gamestate
         this.playerPos = [11, 11];
+        this.catPos = [[3, 3]];
         this._grid[11][11] = new Mouse(this.xAt(11), this.yAt(11));
-        this._grid[3][3] = new Cat(this.xAt(3), this.yAt(3));
+        this._grid[3][3] = new Cat(0, this.xAt(3), this.yAt(3));
+        this._grid[3][4] = new Crate(this.xAt(4), this.yAt(3));
         this._grid[6][6] = new Crate(this.xAt(6), this.yAt(6));
         this._grid[9][6] = new Crate(this.xAt(6), this.yAt(9));
         this._grid[9][7] = new Crate(this.xAt(7), this.yAt(9));
@@ -158,6 +161,154 @@ export class WorldGrid extends Grid {
             floortile.y = mouse.y;
             mouse.y -= this.gridsize;
         }
+    }
+
+    moveCat(x, y) {
+        let cat = this._grid[y][x];
+        if (cat.state == 'sitting' || cat.state == 'sat' || [x, y] == this.playerPos) {
+            this.catPos.splice(cat.i, 1);
+            return
+        }
+        let neighbours;
+        // special-case for top and bottom y-coords because we can't index undefined
+        if (y == 0) {
+            neighbours = [
+                this._grid[y+1][x], null, this._grid[y][x+1], this._grid[y][x-1],
+                this._grid[y+1][x+1], this._grid[y+1][x-1], null, null
+            ]
+        } else if (y == this.rows - 1) {
+            neighbours = [
+                null, this._grid[y-1][x], this._grid[y][x+1], this._grid[y][x-1],
+                null, null, this._grid[y-1][x+1], this._grid[y-1][x-1]
+            ]
+        } else {
+            // 99% case. some will be undefined if x==0 or x==this.cols-1
+            neighbours = [
+                this._grid[y+1][x], this._grid[y-1][x], this._grid[y][x+1], this._grid[y][x-1],
+                this._grid[y+1][x+1], this._grid[y+1][x-1], this._grid[y-1][x+1], this._grid[y-1][x-1]
+            ]
+        }
+        let walkable = neighbours.map((cell) => cell instanceof Floor || cell instanceof Mouse);
+        let directions = {
+            "upleft": walkable[7],
+            "up": walkable[1],
+            "upright": walkable[6],
+            "left": walkable[3],
+            "right": walkable[2],
+            "downleft": walkable[5],
+            "down": walkable[0],
+            "downright": walkable[4]
+        }
+        let xPref; let yPref;
+        let options=[];
+        if (this.playerPos[0] > x) {xPref=1} else if (this.playerPos[0] < x) {xPref=-1} else {xPref=0;}
+        if (this.playerPos[1] > y) {yPref=1} else if (this.playerPos[1] < y) {yPref=-1} else {yPref=0;}
+        cat.facing = xPref;
+        if (xPref == -1) {
+            if (yPref == 1 && directions.downleft) {options.push([y+1, x-1])}
+            if (yPref == -1 && directions.upleft) {options.push([y-1, x-1])}
+            if (directions.left && options.length == 0) {options.push([y, x-1])}
+        } else if (xPref == 1) {
+            if (yPref == 1 && directions.downright) {options.push([y+1, x+1])}
+            if (yPref == -1 && directions.upright) {options.push([y-1, x+1])}
+            if (directions.right && options.length == 0) {options.push([y, x+1])}
+        } else {
+            if (yPref == -1) {
+                if (directions.up) {options.push([y-1, x])}
+            } else if (yPref == 1) {
+                if (directions.down) {options.push([y+1, x])}
+            }
+        }
+        let option = options[0];
+        if (options.length == 0 || cat.idleCooldown > 0.0) {
+            cat.state = 'idle';
+            cat.startingWalk = 0;
+            if (xPref == -1) {
+                if (directions.left) {options.push([y, x-1])}
+            } else if (xPref == 1) {
+                if (directions.right) {options.push([y, x+1])}
+            } else {
+                if (yPref == -1) {
+                    if (directions.upleft) {options.push([y-1, x-1])}
+                    if (directions.upright) {options.push([y-1, x+1])}
+                } else if (yPref == 1) {
+                    if (directions.downleft) {options.push([y+1, x-1])}
+                    if (directions.downright) {options.push([y+1, x+1])}
+                } else {
+                    if (directions.up) {options.push([y-1, x])}
+                    if (directions.down) {options.push([y+1, x])}
+                }
+            }
+            if (yPref == -1) {
+                if (directions.up) {options.push([y-1, x])}
+            } else if (xPref == 1) {
+                if (directions.down) {options.push([y+1, x])}
+            } else {
+                if (xPref == -1) {
+                    if (directions.downleft) {options.push([y+1, x-1])}
+                    if (directions.upleft) {options.push([y-1, x-1])}
+                } else if (xPref == 1) {
+                    if (directions.upright) {options.push([y-1, x+1])}
+                    if (directions.downright) {options.push([y+1, x+1])}
+                } else {
+                    if (directions.left) {options.push([y, x-1])}
+                    if (directions.right) {options.push([y, x+1])}
+                }
+            }
+            option = options[Math.floor(Math.random()*options.length)]
+        } else {
+            //console.log([option[1], option[0]])
+            //console.log(this.playerPos)
+            //console.log(`going to ${option[1]}, ${option[0]}`);
+            if (cat.startingWalk == 2) {
+                cat.state = 'walking';
+            } else {
+                cat.startingWalk++;
+            }
+        }
+        if (options.length == 0) {
+            // we can't go straight towards the target, nor a secondary direction
+            // time to give up and move randomly
+            if (directions.up) {options.push([y-1, x])}
+            if (directions.down) {options.push([y+1, x])}
+            if (directions.left) {options.push([y, x-1])}
+            if (directions.right) {options.push([y, x+1])}
+            if (directions.downleft) {options.push([y+1, x-1])}
+            if (directions.downright) {options.push([y+1, x+1])}
+            if (directions.upleft) {options.push([y-1, x-1])}
+            if (directions.upright) {options.push([y-1, x+1])}
+            if (options.length == 0) {
+                cat.state = 'sitting';
+                return
+            }
+            option = options[Math.floor(Math.random()*options.length)]
+        }
+        let tile = this._grid[option[0]][option[1]];
+        this._grid[option[0]][option[1]] = cat;
+        if (tile instanceof Mouse) {
+            this._grid[y][x] = new Floor(this.xAt(x), this.yAt(y));
+            this.game.gameOver();
+        } else {
+            this._grid[y][x] = tile;
+            tile.x = this.xAt(x);
+            tile.y = this.yAt(y);
+        }
+        cat.x = this.xAt(option[1]);
+        cat.y = this.yAt(option[0]);
+        this.catPos[cat.i] = [option[1], option[0]];
+    }
+
+    update(ratio, keyboard, mouse) {
+        if (!this.game.game_over) {
+            this.cooldown -= ratio;
+            if (this.cooldown < 0.0) {
+                for (let coords of this.catPos) {
+                    this.moveCat(coords[0], coords[1]);
+                }
+                this.cooldown = 50.0;
+            }
+        }
+        super.update(ratio, keyboard, mouse);
     }
 }
 

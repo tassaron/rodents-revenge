@@ -31,8 +31,22 @@ let sprites = {
 
 const drawSprite = {
     "cat_idle": function(i, x, y) {ctx.drawImage(sprites.cat, 42 + (42 * i), 0, 38, 30, x, y + 4, 38, 30)},
+    "cat_idle_r": function(i, x, y) {
+        ctx.save()
+        ctx.translate(x+38,y);
+        ctx.scale(-1, 1);
+        this.cat_idle(i, 0, 0);
+        ctx.restore();
+    },
     "cat_sit": function(i, x, y) {ctx.drawImage(sprites.cat, i == 0 ? 0 : 42 * 3, 0, 38, 30, x, y + 4, 38, 30)},
-    "cat_walk": function(i, x, y) {ctx.drawImage(sprites.cat, 44 * i, 35, 40, 30, x, y + 4, 40, 30)},
+    "cat_walk": function(i, x, y, offset=4) {ctx.drawImage(sprites.cat, offset + (44 * i), 35, 44, 30, x, y + 4, 42, 30)},
+    "cat_walk_r": function(i, x, y) {
+            ctx.save()
+            ctx.translate(x+42,y);
+            ctx.scale(-1, 1);
+            this.cat_walk(i, 0, 0, 0);
+            ctx.restore();
+        },
     "mouse": function(x, y) {ctx.drawImage(sprites.mouse, x, y)},
     "planks": function(x, y) {ctx.drawImage(sprites.planks, x, y)},
     "crate": function(x, y) {ctx.drawImage(sprites.crate, x, y)},
