@@ -16,15 +16,16 @@ export class WorldGrid extends Grid {
     resetWorld() {
         // Fills the worldgrid with initial gamestate
         this.playerPos = [11, 11];
-        this.catPos = [[3, 3]];
+        this.catPos = [[2, 2], [21, 11]];
         this._grid[11][11] = new Mouse(this.xAt(11), this.yAt(11));
-        this._grid[3][3] = new Cat(0, this.xAt(3), this.yAt(3));
-        this._grid[3][4] = new Crate(this.xAt(4), this.yAt(3));
-        this._grid[6][6] = new Crate(this.xAt(6), this.yAt(6));
-        this._grid[9][6] = new Crate(this.xAt(6), this.yAt(9));
-        this._grid[9][7] = new Crate(this.xAt(7), this.yAt(9));
-        this._grid[9][8] = new Crate(this.xAt(8), this.yAt(9));
-        this._grid[9][9] = new Crate(this.xAt(9), this.yAt(9));
+        this._grid[2][2] = new Cat(0, this.xAt(2), this.yAt(2));
+        this._grid[11][21] = new Cat(1, this.xAt(21), this.yAt(11));
+        for (let y=3; y<this.rows-3; y++) {
+            for (let x=3; x<this.cols-3; x++) {
+                if (y > 6 && y < this.rows-6 && x > 6 && x < this.cols-6) {continue}
+                this._grid[y][x] = new Crate(this.xAt(x), this.yAt(y));
+            }
+        }
     }
 
     xAt(coord) {
@@ -36,130 +37,144 @@ export class WorldGrid extends Grid {
     }
 
     moveMouseLeft() {
-        if (this.playerPos[0] == 0) {return}
-        let tile = this._grid[this.playerPos[1]][this.playerPos[0]-1];
-        let mouse = this._grid[this.playerPos[1]][this.playerPos[0]];
-        if (tile instanceof Floor) {
-            this._grid[this.playerPos[1]][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]][this.playerPos[0]-1] = mouse;
-            this.playerPos[0] -= 1;
-            tile.x += this.gridsize;
-            mouse.x -= this.gridsize;
-        } else if (tile instanceof Cat) {
-            this.game.gameOver();
-        } else if (tile instanceof Crate) {
-            // search leftward for more crates
-            let floortile;
-            let x;
-            for (x = this.playerPos[0] - 1; x > -1; x--) {
-                floortile = this._grid[this.playerPos[1]][x];
-                if (floortile instanceof Crate) {continue} else {break}
-            }
-            // floortile should now be a floor tile, or else we can't move
-            if (floortile instanceof Crate) {return}
-            this._grid[this.playerPos[1]][x] = tile;
-            this._grid[this.playerPos[1]][this.playerPos[0]-1] = mouse;
-            this._grid[this.playerPos[1]][this.playerPos[0]] = floortile;
-            this.playerPos[0] -= 1;
-            tile.x = this.gridsize * x;
-            floortile.x = mouse.x;
-            mouse.x -= this.gridsize;
-        }
+        this.moveMouseHori(-1);
     }
 
     moveMouseRight() {
-        if (this.playerPos[0] == this.cols - 1) {return}
-        let mouse = this._grid[this.playerPos[1]][this.playerPos[0]];
-        let tile = this._grid[this.playerPos[1]][this.playerPos[0]+1];
-        if (tile instanceof Floor) {
-            this._grid[this.playerPos[1]][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]][this.playerPos[0]+1] = mouse;
-            this.playerPos[0] += 1;
-            tile.x -= this.gridsize;
-            mouse.x += this.gridsize;
-        } else if (tile instanceof Cat) {
-            this.game.gameOver();
-        } else if (tile instanceof Crate) {
-            // search rightward for more crates
-            let floortile;
-            let x;
-            for (x = this.playerPos[0] + 1; x < this.cols; x++) {
-                floortile = this._grid[this.playerPos[1]][x];
-                if (floortile instanceof Crate) {continue} else {break}
-            }
-            // floortile should now be a floor tile, or else we can't move
-            if (floortile instanceof Crate) {return}
-            this._grid[this.playerPos[1]][x] = tile;
-            this._grid[this.playerPos[1]][this.playerPos[0]+1] = mouse;
-            this._grid[this.playerPos[1]][this.playerPos[0]] = floortile;
-            this.playerPos[0] += 1;
-            tile.x = this.gridsize * x;
-            floortile.x = mouse.x;
-            mouse.x += this.gridsize;
-        }
-    }
-
-    moveMouseDown() {
-        if (this.playerPos[1] == this.rows - 1) {return}
-        let mouse = this._grid[this.playerPos[1]][this.playerPos[0]];
-        let tile = this._grid[this.playerPos[1]+1][this.playerPos[0]];
-        if (tile instanceof Floor) {
-            this._grid[this.playerPos[1]][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]+1][this.playerPos[0]] = mouse;
-            this.playerPos[1] += 1;
-            tile.y -= this.gridsize;
-            mouse.y += this.gridsize;
-        } else if (tile instanceof Cat) {
-            this.game.gameOver();
-        } else if (tile instanceof Crate) {
-            // search downward for more crates
-            let floortile;
-            let y;
-            for (y = this.playerPos[1] + 1; y < this.rows; y++) {
-                floortile = this._grid[y][this.playerPos[0]];
-                if (floortile instanceof Crate) {continue} else {break}
-            }
-            // floortile should now be a floor tile, or else we can't move
-            if (floortile instanceof Crate) {return}
-            this._grid[y][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]+1][this.playerPos[0]] = mouse;
-            this._grid[this.playerPos[1]][this.playerPos[0]] = floortile;
-            this.playerPos[1] += 1;
-            tile.y = this.gridsize * y;
-            floortile.y = mouse.y;
-            mouse.y += this.gridsize;
-        }
+        this.moveMouseHori(1);
     }
 
     moveMouseUp() {
-        if (this.playerPos[1] == 0) {return}
+        this.moveMouseVert(-1);
+    }
+
+    moveMouseDown() {
+        this.moveMouseVert(1);
+    }
+
+    moveMouseHori(movement) {
+        if (this.playerPos[0] == (movement == 1 ? this.cols-1 : 0)) {return}
+        let crate = this._grid[this.playerPos[1]][this.playerPos[0]+movement];
         let mouse = this._grid[this.playerPos[1]][this.playerPos[0]];
-        let tile = this._grid[this.playerPos[1]-1][this.playerPos[0]];
-        if (tile instanceof Floor) {
-            this._grid[this.playerPos[1]][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]-1][this.playerPos[0]] = mouse;
-            this.playerPos[1] -= 1;
-            tile.y += this.gridsize;
-            mouse.y -= this.gridsize;
-        } else if (tile instanceof Cat) {
+        if (crate instanceof Floor) {
+            this._grid[this.playerPos[1]][this.playerPos[0]] = crate;
+            this._grid[this.playerPos[1]][this.playerPos[0]+movement] = mouse;
+            this.playerPos[0] += movement;
+            crate.x -= movement*this.gridsize;
+            mouse.x += movement*this.gridsize;
+        } else if (crate instanceof Cat) {
             this.game.gameOver();
-        } else if (tile instanceof Crate) {
-            // search upward for more crates
+        } else if (crate instanceof Crate) {
+            // search horizontally for more crates
+            let floortile;
+            let x;
+            let catx;
+            let r;
+            function search(self, x) {
+                floortile = self._grid[self.playerPos[1]][x];
+                if (floortile instanceof Crate) {
+                    return true;
+                } else if (floortile instanceof Cat) {
+                    if (catx === undefined) {
+                        catx = x;
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            if (movement == 1) {
+                for (x = this.playerPos[0] + 1; x < this.cols; x++) {
+                    r = search(this, x);
+                    if (r) {continue} else {break}
+                }
+            } else {
+                for (x = this.playerPos[0] - 1; x > -1; x--) {
+                    r = search(this, x);
+                    if (r) {continue} else {break}
+                }
+            }
+            // if floortile is not Floor by this point, then we can't move
+            if (!(floortile instanceof Floor)) {return}
+            if (catx !== undefined) {
+                let cat = this._grid[this.playerPos[1]][catx];
+                this._grid[this.playerPos[1]][catx] = crate;
+                this._grid[this.playerPos[1]][x] = cat;
+                crate.x = this.gridsize * catx;
+                cat.x = this.gridsize * x;
+                this.catPos[cat.i] = [x, this.playerPos[1]];
+            } else {
+                this._grid[this.playerPos[1]][x] = crate;
+                crate.x = this.gridsize * x;
+            }
+            this._grid[this.playerPos[1]][this.playerPos[0]+movement] = mouse;
+            this._grid[this.playerPos[1]][this.playerPos[0]] = floortile;
+            this.playerPos[0] += movement;
+            floortile.x = mouse.x;
+            mouse.x += movement*this.gridsize;
+        }
+    }
+
+    moveMouseVert(movement) {
+        if (this.playerPos[1] == (movement == 1 ? this.rows - 1 : 0)) {return}
+        let mouse = this._grid[this.playerPos[1]][this.playerPos[0]];
+        let crate = this._grid[this.playerPos[1]+movement][this.playerPos[0]];
+        if (crate instanceof Floor) {
+            this._grid[this.playerPos[1]][this.playerPos[0]] = crate;
+            this._grid[this.playerPos[1]+movement][this.playerPos[0]] = mouse;
+            this.playerPos[1] += movement;
+            crate.y -= movement*this.gridsize;
+            mouse.y += movement*this.gridsize;
+        } else if (crate instanceof Cat) {
+            this.game.gameOver();
+        } else if (crate instanceof Crate) {
+            // search vertically for more crates
             let floortile;
             let y;
-            for (y = this.playerPos[1] - 1; y > -1; y--) {
-                floortile = this._grid[y][this.playerPos[0]];
-                if (floortile instanceof Crate) {continue} else {break}
+            let caty;
+            let r;
+            function search(self, y) {
+                floortile = self._grid[y][self.playerPos[0]];
+                if (floortile instanceof Crate) {
+                    return true;
+                } else if (floortile instanceof Cat) {
+                    if (caty === undefined) {
+                        caty = y;
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
             }
-            // floortile should now be a floor tile, or else we can't move
-            if (floortile instanceof Crate) {return}
-            this._grid[y][this.playerPos[0]] = tile;
-            this._grid[this.playerPos[1]-1][this.playerPos[0]] = mouse;
+            if (movement == 1) {
+                for (y = this.playerPos[1] + 1; y < this.rows; y++) {
+                    r = search(this, y);
+                    if (r) {continue} else {break}
+                }
+            } else {
+                for (y = this.playerPos[1] - 1; y > -1; y--) {
+                    r = search(this, y);
+                    if (r) {continue} else {break}
+                }
+            }
+            // if floortile is not Floor by this point, then we can't move
+            if (!(floortile instanceof Floor)) {return}
+            if (caty !== undefined) {
+                let cat = this._grid[caty][this.playerPos[0]];
+                this._grid[caty][this.playerPos[0]] = crate;
+                this._grid[y][this.playerPos[0]] = cat;
+                crate.y = this.gridsize * caty;
+                cat.y = this.gridsize * y;
+                this.catPos[cat.i] = [this.playerPos[0], y];
+            } else {
+                this._grid[y][this.playerPos[0]] = crate;
+                crate.y = this.gridsize * y;
+            }
+            this._grid[this.playerPos[1]+movement][this.playerPos[0]] = mouse;
             this._grid[this.playerPos[1]][this.playerPos[0]] = floortile;
-            this.playerPos[1] -= 1;
-            tile.y = this.gridsize * y;
+            this.playerPos[1] += movement;
             floortile.y = mouse.y;
-            mouse.y -= this.gridsize;
+            mouse.y += movement*this.gridsize;
         }
     }
 
@@ -257,9 +272,6 @@ export class WorldGrid extends Grid {
             }
             option = options[Math.floor(Math.random()*options.length)]
         } else {
-            //console.log([option[1], option[0]])
-            //console.log(this.playerPos)
-            //console.log(`going to ${option[1]}, ${option[0]}`);
             if (cat.startingWalk == 2) {
                 cat.state = 'walking';
             } else {
