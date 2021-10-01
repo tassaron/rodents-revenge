@@ -10,6 +10,7 @@ export class WorldGrid extends Grid {
         super(0, 38, 24, 22, 38, Floor);
         this.game = game;
         this.cooldown = 50.0;
+        this.cheeselessTimer = 50;
         this.resetWorld();
     }
 
@@ -216,8 +217,14 @@ export class WorldGrid extends Grid {
     moveCat(x, y) {
         let cat = this._grid[y][x];
         if ((cat.state != "walking" && cat.state != "idle") || [x, y] == this.playerPos) {
+            this.cheeselessTimer--;
+            if (this.cheeselessTimer < 1) {
+                this.cheeseCollected++;
+                this.cheeselessTimer = 50;
+            }
             return
         }
+        this.cheeselessTimer = 50;
         let neighbours;
         // special-case for top and bottom y-coords because we can't index undefined
         if (y == 0) {

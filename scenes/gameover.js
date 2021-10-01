@@ -12,6 +12,8 @@ export class GameOverScene {
         this.game.allowUserInput = true;
         if (mouse.leftClick) {
             this.game.game_over = false;
+            this.game.level = 1;
+            this.game.score = 0;
             this.game.changeScene(new MenuScene(this.game));
         }
     }
