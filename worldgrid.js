@@ -40,7 +40,6 @@ export class WorldGrid extends Grid {
             }
             this.catPos.push([x, y]);
             this._grid[y][x] = new Cat(i, this.xAt(x), this.yAt(y));
-            this._grid[y][x].state = "cheese"
         }
         this.playerPos = [11, 11];
         this._grid[11][11] = new Mouse(this.xAt(11), this.yAt(11));

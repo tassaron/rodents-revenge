@@ -7,6 +7,12 @@ export class WorldScene {
         this.game = game;
         this.grid = new WorldGrid(game);
         this.dpad = new Dpad(this.grid, game.ctx.canvas.width / 2, this.grid.height);
+        this.scoreDisplay = new ScoreDisplay(
+            game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 48, "score",
+        );
+        this.levelDisplay = new ScoreDisplay(
+            game, game.ctx.canvas.width / 2 + this.dpad.width, this.grid.height + 48, "level", "Level: "
+        );
     }
 
     update(ratio, keyboard, mouse) {
@@ -23,6 +29,26 @@ export class WorldScene {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         this.grid.draw(ctx, drawSprite);
         this.dpad.draw(ctx, drawSprite);
+        this.scoreDisplay.draw(ctx);
+        this.levelDisplay.draw(ctx);
     }
 }
 
+class ScoreDisplay {
+    constructor(game, x, y, variable, label="Score: ", font="36pt Sans", colour="#fff") {
+        this.game = game;
+        this.variable = variable;
+        this.x = x;
+        this.y = y;
+        this.font = font;
+        this.label = label;
+        this.colour = colour;
+    }
+
+    draw(ctx) {
+        ctx.font = this.font;
+        ctx.fillStyle = this.colour;
+        let text = `${this.label}${this.game[this.variable]}`;
+        ctx.fillText(text, this.x - (ctx.measureText(text).width/2), this.y);
+    }
+}
