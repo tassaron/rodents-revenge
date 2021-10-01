@@ -11,28 +11,39 @@ export class WorldGrid extends Grid {
         this.game = game;
         this.cooldown = 50.0;
         this.resetWorld();
-        this.cheesePos = [];
     }
 
     resetWorld() {
         // Fills the worldgrid with initial gamestate
-        this.playerPos = [11, 11];
-        this.catPos = [[2, 2], [21, 11]];
-        this._grid[11][11] = new Mouse(this.xAt(11), this.yAt(11));
-        this._grid[2][2] = new Cat(0, this.xAt(2), this.yAt(2));
-        this._grid[11][21] = new Cat(1, this.xAt(21), this.yAt(11));
         for (let y=3; y<this.rows-3; y++) {
             for (let x=3; x<this.cols-3; x++) {
-                if (y > 6 && y < this.rows-6 && x > 6 && x < this.cols-6) {continue}
+                if (y > 6 && y < this.rows-7 && x > 6 && x < this.cols-7) {continue}
                 this._grid[y][x] = new Crate(this.xAt(x), this.yAt(y));
             }
         }
-        let wallSpawns = this.game.level * 2;
-        for (let i = 0; i < wallSpawns; i++) {
+        let wallSpawns = this.game.level-1 * 2;
+        for (let i = 0; i <= wallSpawns; i++) {
             let y = Math.floor(Math.random()*this.rows);
             let x = Math.floor(Math.random()*this.cols);
             this._grid[y][x] = new Wall(this.xAt(x), this.yAt(y));
         }
+        this.cheeseCollected = 0;
+        this.catPos = [];
+        for (let i = 0; i < this.game.level + 1; i++) {
+            let y = Math.floor(Math.random()*6);
+            let x = Math.floor(Math.random()*6);
+            if (x > 2) {x+=18}
+            if (y > 2) {y+=16}
+            while (this._grid[y][x] instanceof Cat) {
+                y = Math.floor(Math.random()*3);
+                x = Math.floor(Math.random()*3);
+            }
+            this.catPos.push([x, y]);
+            this._grid[y][x] = new Cat(i, this.xAt(x), this.yAt(y));
+            this._grid[y][x].state = "cheese"
+        }
+        this.playerPos = [11, 11];
+        this._grid[11][11] = new Mouse(this.xAt(11), this.yAt(11));
     }
 
     xAt(coord) {
@@ -74,6 +85,7 @@ export class WorldGrid extends Grid {
                 this.game.score += 100 * this.game.level;
                 this._grid[this.playerPos[1]][this.playerPos[0]+movement] = new Floor(this.xAt(this.playerPos[0]+movement), this.yAt(this.playerPos[1]));
                 this.moveMouseHori(movement);
+                this.cheeseCollected++;
                 return
             } else {
                 this.game.gameOver();
@@ -112,6 +124,7 @@ export class WorldGrid extends Grid {
             if (!(floortile instanceof Floor)) {return}
             if (catx !== undefined) {
                 let cat = this._grid[this.playerPos[1]][catx];
+                if (cat.state == "cheese") {return}
                 this._grid[this.playerPos[1]][catx] = crate;
                 this._grid[this.playerPos[1]][x] = cat;
                 crate.x = this.gridsize * catx;
@@ -144,6 +157,7 @@ export class WorldGrid extends Grid {
                 this.game.score += 100 * this.game.level;
                 this._grid[this.playerPos[1]+movement][this.playerPos[0]] = new Floor(this.xAt(this.playerPos[0]), this.yAt(this.playerPos[1]+movement));
                 this.moveMouseVert(movement);
+                this.cheeseCollected++;
                 return
             } else {
                 this.game.gameOver();
@@ -182,6 +196,7 @@ export class WorldGrid extends Grid {
             if (!(floortile instanceof Floor)) {return}
             if (caty !== undefined) {
                 let cat = this._grid[caty][this.playerPos[0]];
+                if (cat.state == "cheese") {return}
                 this._grid[caty][this.playerPos[0]] = crate;
                 this._grid[y][this.playerPos[0]] = cat;
                 crate.y = this.gridsize * caty;
@@ -201,11 +216,7 @@ export class WorldGrid extends Grid {
 
     moveCat(x, y) {
         let cat = this._grid[y][x];
-        if (cat.state == 'sitting' || cat.state == 'sat' || [x, y] == this.playerPos) {
-            return
-        }
-        if (cat.state == 'cheese') {
-            this.cheesePos.push(this.catPos.splice(cat.i, 1));
+        if ((cat.state != "walking" && cat.state != "idle") || [x, y] == this.playerPos) {
             return
         }
         let neighbours;
@@ -332,6 +343,7 @@ export class WorldGrid extends Grid {
         cat.x = this.xAt(option[1]);
         cat.y = this.yAt(option[0]);
         this.catPos[cat.i] = [option[1], option[0]];
+        return
     }
 
     update(ratio, keyboard, mouse) {
@@ -368,6 +380,11 @@ class Wall extends Thing {
     draw(ctx, drawSprite) {
         ctx.fillStyle = "rgba(217, 160, 102, 0.5)";
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = "#7d4f35";
+        ctx.fillRect(this.x, this.y, this.width, 4);
+        ctx.fillRect(this.x, this.y+this.height-4, this.width, 4);
+        ctx.fillRect(this.x, this.y, 4, this.height);
+        ctx.fillRect(this.x+this.width-4, this.y, 4, this.height);
     }
 }
 

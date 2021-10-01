@@ -10,6 +10,11 @@ export class WorldScene {
     }
 
     update(ratio, keyboard, mouse) {
+        if (this.grid.cheeseCollected == this.game.level + 1) {
+            this.game.level++;
+            this.grid = new WorldGrid(this.game);
+            this.dpad.grid = this.grid;
+        }
         this.grid.update(ratio, keyboard, mouse);
         this.dpad.update(ratio, keyboard, mouse);
     }

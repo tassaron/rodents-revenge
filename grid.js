@@ -10,13 +10,7 @@ export class Grid {
         this.gridsize = gridsize;
         this.width = cols * gridsize;
         this.height = rows * gridsize;
-        this._grid = arrayOfLength(rows);
-        for (let y = 0; y < this.rows; y++) {
-            this._grid[y] = [];
-            for (let x = 0; x < this.cols; x++) {
-                this._grid[y][x] = new cell(gridsize * x, gridsize * y, gridsize, gridsize);
-            }
-        }
+        this.clear(cell);
     }
 
     draw(ctx, drawSprite) {
@@ -31,6 +25,16 @@ export class Grid {
         for (let row of this._grid) {
             for (let cell of row) {
                 cell.update(ratio, keyboard, mouse);
+            }
+        }
+    }
+
+    clear(cell=Thing) {
+        this._grid = arrayOfLength(this.rows);
+        for (let y = 0; y < this.rows; y++) {
+            this._grid[y] = [];
+            for (let x = 0; x < this.cols; x++) {
+                this._grid[y][x] = new cell(this.gridsize * x, this.gridsize * y, this.gridsize, this.gridsize);
             }
         }
     }
