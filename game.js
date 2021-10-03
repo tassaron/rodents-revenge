@@ -17,6 +17,11 @@ export class Game {
         this.timer = [0.0, function(){}, this];
         this.scene = new MenuScene(this);
         this.prevScene = this.scene;
+        this.high_score = null;
+        if (typeof(Storage) !== undefined) {
+            this.high_score = localStorage.getItem("high_score");
+        }
+        if (this.high_score == null) {this.high_score = 0}
     }
 
     update(keyboard, mouse) {
@@ -68,6 +73,12 @@ export class Game {
 
     gameOver() {
         if (!this.game_over) {
+            if (this.score > this.high_score) {
+                this.high_score = this.score;
+                if (typeof(Storage) !== undefined) {
+                    localStorage.setItem("high_score", this.high_score);
+                }
+            }
             this.changeScene(new GameOverScene(this));
         }
     }

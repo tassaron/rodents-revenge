@@ -15,6 +15,7 @@ export class Dpad extends Thing {
     }
 
     update(ratio, keyboard, mouse) {
+        if (this.grid.game.game_over) {return}
         if (keyboard.left && this.left.cooldown == 0.0) {
             this.leftPressed(this);
             this.left.cooldown = 10.0;

@@ -10,6 +10,9 @@ export class WorldScene {
         this.scoreDisplay = new ScoreDisplay(
             game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 48, "score",
         );
+        this.hiscoreDisplay = new ScoreDisplay(
+            game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 104, "high_score", "Best: ", "28pt Sans"
+        );
         this.levelDisplay = new ScoreDisplay(
             game, game.ctx.canvas.width / 2 + this.dpad.width, this.grid.height + 48, "level", "Level: "
         );
@@ -30,6 +33,7 @@ export class WorldScene {
         this.grid.draw(ctx, drawSprite);
         this.dpad.draw(ctx, drawSprite);
         this.scoreDisplay.draw(ctx);
+        this.hiscoreDisplay.draw(ctx);
         this.levelDisplay.draw(ctx);
     }
 }

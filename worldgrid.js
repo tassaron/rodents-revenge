@@ -99,6 +99,7 @@ export class WorldGrid extends Grid {
             function search(self, x) {
                 floortile = self._grid[self.playerPos[1]][x];
                 if (floortile instanceof Crate) {
+                    if (catx !== undefined) {catx = -1}
                     return true;
                 } else if (floortile instanceof Cat) {
                     if (catx === undefined) {
@@ -122,15 +123,40 @@ export class WorldGrid extends Grid {
             }
             // if floortile is not Floor by this point, then we can't move
             if (!(floortile instanceof Floor)) {return}
-            if (catx !== undefined) {
+            if (catx == -1) {
+                // a cat is in the way, followed by crates. we must move every tile to be safe
+                if (movement == 1) {
+                    for (let i = x; i > this.playerPos[0] + 1; i--) {
+                        // working backwards, push every tile forwards
+                        let tile = this._grid[this.playerPos[1]][i-1];
+                        tile.x += this.gridsize;
+                        this._grid[this.playerPos[1]][i] = tile;
+                        if (tile instanceof Cat) {
+                            this.catPos[tile.i] = [i, this.playerPos[1]];
+                        }
+                    }
+
+                } else {
+                    for (let i = x; i < this.playerPos[0] - 1; i++) {
+                        let tile = this._grid[this.playerPos[1]][i+1];
+                        tile.x -= this.gridsize;
+                        this._grid[this.playerPos[1]][i] = tile;
+                        if (tile instanceof Cat) {
+                            this.catPos[tile.i] = [i, this.playerPos[1]];
+                        }
+                    }
+                }
+            } else if (catx !== undefined) {
+                // crates followed by cats, so we can swap four tiles
                 let cat = this._grid[this.playerPos[1]][catx];
-                if (cat.state == "cheese") {return}
                 this._grid[this.playerPos[1]][catx] = crate;
                 this._grid[this.playerPos[1]][x] = cat;
                 crate.x = this.gridsize * catx;
                 cat.x = this.gridsize * x;
+                if (cat.state == "cheese") {cat.states["cheese"].x = cat.x;}
                 this.catPos[cat.i] = [x, this.playerPos[1]];
             } else {
+                // just crates, so we can swap three tiles
                 this._grid[this.playerPos[1]][x] = crate;
                 crate.x = this.gridsize * x;
             }
@@ -171,6 +197,7 @@ export class WorldGrid extends Grid {
             function search(self, y) {
                 floortile = self._grid[y][self.playerPos[0]];
                 if (floortile instanceof Crate) {
+                    if (caty !== undefined) {caty = -1}
                     return true;
                 } else if (floortile instanceof Cat) {
                     if (caty === undefined) {
@@ -194,13 +221,37 @@ export class WorldGrid extends Grid {
             }
             // if floortile is not Floor by this point, then we can't move
             if (!(floortile instanceof Floor)) {return}
-            if (caty !== undefined) {
+            if (caty == -1) {
+                // a cat is in the way, followed by crates. we must move every tile to be safe
+                if (movement == 1) {
+                    for (let i = y; i > this.playerPos[1] + 1; i--) {
+                        // working backwards, push every tile forwards
+                        let tile = this._grid[i-1][this.playerPos[0]];
+                        tile.y += this.gridsize;
+                        this._grid[i][this.playerPos[0]] = tile;
+                        if (tile instanceof Cat) {
+                            this.catPos[tile.i] = [this.playerPos[0], i];
+                        }
+                    }
+
+                } else {
+                    for (let i = y; i < this.playerPos[1] - 1; i++) {
+                        let tile = this._grid[i+1][this.playerPos[0]];
+                        tile.y -= this.gridsize;
+                        this._grid[i][this.playerPos[0]] = tile;
+                        if (tile instanceof Cat) {
+                            this.catPos[tile.i] = [this.playerPos[0], i];
+                        }
+                    }
+                }
+            } else if (caty !== undefined) {
                 let cat = this._grid[caty][this.playerPos[0]];
-                if (cat.state == "cheese") {return}
+                //if (cat.state == "cheese") {return}
                 this._grid[caty][this.playerPos[0]] = crate;
                 this._grid[y][this.playerPos[0]] = cat;
                 crate.y = this.gridsize * caty;
                 cat.y = this.gridsize * y;
+                if (cat.state == "cheese") {cat.states["cheese"].y = cat.y;}
                 this.catPos[cat.i] = [this.playerPos[0], y];
             } else {
                 this._grid[y][this.playerPos[0]] = crate;

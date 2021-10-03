@@ -19,6 +19,7 @@ export class Cat extends Thing {
     }
 
     update(ratio, keyboard, mouse) {
+        this.states[this.state].update(ratio, keyboard, mouse);
         if (this.state == "cheese") {return}
         if (this.state == "idle" && this.prevState != "idle") {
             if (this.cooldown == 0.0) {
@@ -41,7 +42,6 @@ export class Cat extends Thing {
             }
         }
 
-        this.states[this.state].update(ratio, keyboard, mouse);
         if (this.state == "sitting" && this.states["sitting"].loops > 0) {
             this.state = "sat";
             this.cooldown = 90.0 + ratio;
