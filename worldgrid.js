@@ -153,7 +153,6 @@ export class WorldGrid extends Grid {
                 this._grid[this.playerPos[1]][x] = cat;
                 crate.x = this.gridsize * catx;
                 cat.x = this.gridsize * x;
-                if (cat.state == "cheese") {cat.states["cheese"].x = cat.x;}
                 this.catPos[cat.i] = [x, this.playerPos[1]];
             } else {
                 // just crates, so we can swap three tiles
@@ -246,12 +245,10 @@ export class WorldGrid extends Grid {
                 }
             } else if (caty !== undefined) {
                 let cat = this._grid[caty][this.playerPos[0]];
-                //if (cat.state == "cheese") {return}
                 this._grid[caty][this.playerPos[0]] = crate;
                 this._grid[y][this.playerPos[0]] = cat;
                 crate.y = this.gridsize * caty;
                 cat.y = this.gridsize * y;
-                if (cat.state == "cheese") {cat.states["cheese"].y = cat.y;}
                 this.catPos[cat.i] = [this.playerPos[0], y];
             } else {
                 this._grid[y][this.playerPos[0]] = crate;

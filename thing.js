@@ -1,11 +1,16 @@
 export class Thing {
     constructor(x, y, width, height, src=null) {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
         this.width = width;
         this.height = height;
         this.src = src;
     }
+
+    get x() {return this._x}
+    set x(i) {this._x = i}
+    get y() {return this._y}
+    set y(i) {this._y = i}
 
     update(ratio, keyboard, mouse) {}
 
