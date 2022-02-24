@@ -15,8 +15,8 @@ export class GameOverScene {
                     send_score_button.dataset.csrfToken,
                 );
                 e.currentTarget.setAttribute("style", "display: none;");
+                e.currentTarget.removeEventListener("click", sendScore);
                 e.stopPropagation();
-                send_score_button.removeEventListener("click", this)
             }
             send_score_button.setAttribute("style", "z-index: 100; display: block; left: 50%; top: 50%; transform: translate(-50%);");
             send_score_button.addEventListener("click", sendScore);
