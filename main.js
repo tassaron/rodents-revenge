@@ -67,18 +67,19 @@ function preload_success() {
     }
 }
 
+const prefix = "/static/client/rainey_arcade/js/rodents-revenge/assets/";
 sprites.cat.addEventListener("load", preload_success)
-sprites.cat.src = "assets/cat.png";
+sprites.cat.src = prefix + "cat.png";
 sprites.mouse.addEventListener("load", preload_success)
-sprites.mouse.src = "assets/mouse.png";
+sprites.mouse.src = prefix + "mouse.png";
 sprites.cheese.addEventListener("load", preload_success)
-sprites.cheese.src = "assets/cheese.png";
+sprites.cheese.src = prefix + "cheese.png";
 sprites.planks.addEventListener("load", preload_success)
-sprites.planks.src = "assets/planks.png";
+sprites.planks.src = prefix + "planks.png";
 sprites.crate.addEventListener("load", preload_success)
-sprites.crate.src = "assets/crate.png";
+sprites.crate.src = prefix + "crate.png";
 sprites.input.addEventListener("load", preload_success)
-sprites.input.src = "assets/input.png";
+sprites.input.src = prefix + "input.png";
 
 
 function pauseGame() {

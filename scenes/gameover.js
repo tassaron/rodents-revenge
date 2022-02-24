@@ -4,6 +4,23 @@ export class GameOverScene {
     constructor(game) {
         this.game = game;
         game.game_over = true;
+
+        // If embedded on Rainey Arcade, integrate with the send_score_button
+        const send_score_button = document.getElementById("send_score_button");
+        if (send_score_button) {
+            function sendScore(e) {
+                send_score(
+                    document.getElementById("game_title").dataset.filename,
+                    game.score,
+                    send_score_button.dataset.csrfToken,
+                );
+                e.currentTarget.setAttribute("style", "display: none;");
+                e.stopPropagation();
+                send_score_button.removeEventListener("click", this)
+            }
+            send_score_button.setAttribute("style", "z-index: 100; display: block; left: 50%; top: 50%; transform: translate(-50%);");
+            send_score_button.addEventListener("click", sendScore);
+        }
     }
 
     update(ratio, keyboard, mouse) {
