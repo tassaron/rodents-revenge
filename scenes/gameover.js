@@ -5,22 +5,7 @@ export class GameOverScene {
         this.game = game;
         game.game_over = true;
 
-        // If embedded on Rainey Arcade, integrate with the send_score_button
-        const send_score_button = document.getElementById("send_score_button");
-        if (send_score_button) {
-            function sendScore(e) {
-                send_score(
-                    document.getElementById("game_title").dataset.filename,
-                    game.score,
-                    send_score_button.dataset.csrfToken,
-                );
-                e.currentTarget.setAttribute("style", "display: none;");
-                e.currentTarget.removeEventListener("click", sendScore);
-                e.stopPropagation();
-            }
-            send_score_button.setAttribute("style", "z-index: 100; display: block; left: 50%; top: 50%; transform: translate(-50%);");
-            send_score_button.addEventListener("click", sendScore);
-        }
+        show_send_score_button(game);
     }
 
     update(ratio, keyboard, mouse) {
@@ -28,6 +13,7 @@ export class GameOverScene {
         this.game.prevScene.update(ratio, keyboard, mouse);
         this.game.allowUserInput = true;
         if (mouse.leftClick) {
+            hide_send_score_button();
             this.game.game_over = false;
             this.game.level = 1;
             this.game.score = 0;
@@ -47,5 +33,25 @@ export class GameOverScene {
         ctx.fillText("Game Over", ctx.canvas.width / 2 - 132, ctx.canvas.height / 3 - 32);
         ctx.font = "16pt Sans";
         ctx.fillText("tap or click to restart", ctx.canvas.width / 2 - 92, ctx.canvas.height / 3 + 22);
+    }
+}
+
+
+function show_send_score_button(game) {
+    // If embedded on Rainey Arcade, integrate with the send_score_button
+    const send_score_button = document.getElementById("send_score_button");
+    if (send_score_button) {
+        function sendScore(e) {
+            send_score(
+                document.getElementById("game_title").dataset.filename,
+                game.score,
+                send_score_button.dataset.csrfToken,
+            );
+            e.currentTarget.setAttribute("style", "display: none;");
+            e.currentTarget.removeEventListener("click", sendScore);
+            e.stopPropagation();
+        }
+        send_score_button.setAttribute("style", "z-index: 100; display: block; left: 50%; top: 50%; transform: translate(-50%);");
+        send_score_button.addEventListener("click", sendScore);
     }
 }
