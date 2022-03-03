@@ -1,4 +1,5 @@
 import { MenuScene } from "./menu.js";
+import { send_score, hide_send_score_button } from "../../send_score.js";
 
 export class GameOverScene {
     constructor(game) {
