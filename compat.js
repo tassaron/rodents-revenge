@@ -11,7 +11,7 @@ const loadModule = async (modulePath) => {
     }
 }
 
-loadModule("../../send_score.js").then(send_score_module => {
+loadModule("../send_score.js").then(send_score_module => {
     send_score = send_score_module.send_score;
     hide_send_score_button = send_score_module.hide_send_score_button;
 }).catch((e) => {
