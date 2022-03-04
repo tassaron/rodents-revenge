@@ -26,15 +26,16 @@ export class GameOverScene {
     draw(ctx, drawSprite) {
         this.game.prevScene.draw(ctx, drawSprite);
         this.game.darkenCanvas(ctx);
+        const restartText = "tap or click to restart";
         ctx.fillStyle = "#000";
         ctx.fillRect(ctx.canvas.width / 4, (ctx.canvas.height / 3) - ctx.canvas.height / 6, ctx.canvas.width / 2, ctx.canvas.height / 4);
         ctx.fillStyle = "#800000";
         ctx.fillRect((ctx.canvas.width / 4) + 2, ((ctx.canvas.height / 3) - ctx.canvas.height / 6) + 2, (ctx.canvas.width / 2) - 4, (ctx.canvas.height / 4) - 4);
         ctx.font = "3.25rem var(--arcade-font)";
         ctx.fillStyle = "#fff";
-        ctx.fillText("Game Over", ctx.canvas.width / 2 - 132, ctx.canvas.height / 3 - 32);
+        ctx.fillText("Game Over", ctx.canvas.width / 2 - (ctx.measureText("Game Over").width / 2), ctx.canvas.height / 3 - 32);
         ctx.font = "1.25rem var(--arcade-font)";
-        ctx.fillText("tap or click to restart", ctx.canvas.width / 2 - 92, ctx.canvas.height / 3 + 22);
+        ctx.fillText(restartText, ctx.canvas.width / 2 - (ctx.measureText(restartText).width / 2), ctx.canvas.height / 3 + 22);
     }
 }
 
