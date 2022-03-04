@@ -14,7 +14,7 @@ export class Button extends ClickableThing {
         ctx.fillStyle = this.colour;
         ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.height - 4);
         ctx.fillStyle = this.outline;
-        ctx.font = "16pt Sans";
+        ctx.font = "1rem var(--arcade-font)";
         ctx.fillText(this.text, this.x + ((this.width / 2) - (ctx.measureText(this.text).width / 2)), this.y + this.height / 2 + 8);
     }
 }

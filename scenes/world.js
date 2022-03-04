@@ -11,7 +11,7 @@ export class WorldScene {
             game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 48, "score",
         );
         this.hiscoreDisplay = new ScoreDisplay(
-            game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 104, "high_score", "Best: ", "28pt Sans"
+            game, game.ctx.canvas.width / 2 - this.dpad.width, this.grid.height + 104, "high_score", "Best: ", "1.75rem var(--arcade-font)"
         );
         this.levelDisplay = new ScoreDisplay(
             game, game.ctx.canvas.width / 2 + this.dpad.width, this.grid.height + 48, "level", "Level: "
@@ -39,7 +39,7 @@ export class WorldScene {
 }
 
 class ScoreDisplay {
-    constructor(game, x, y, variable, label="Score: ", font="36pt Sans", colour="#fff") {
+    constructor(game, x, y, variable, label="Score: ", font="2.25rem var(--arcade-font)", colour="#fff") {
         this.game = game;
         this.variable = variable;
         this.x = x;

@@ -16,7 +16,7 @@ let game;
 */
 ctx.fillStyle = "#000";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
-ctx.font = "48pt Sans";
+ctx.font = "3rem var(--arcade-font)";
 ctx.fillStyle = "#fff";
 ctx.fillText("loading", (canvas.width / 2) - (ctx.measureText("loading").width / 2), (canvas.height / 2) - (canvas.height / 6));
 let preloaded = 0;
@@ -67,7 +67,13 @@ function preload_success() {
     }
 }
 
-const prefix = "/static/client/rainey_arcade/js/rodents-revenge/assets/";
+let prefix = String(document.location).indexOf("://rainey.tech/");
+if (prefix != -1 && prefix < 6) {
+    // http://rainey.tech or https://rainey.tech
+    prefix = "/static/client/rainey_arcade/js/rodents-revenge/assets/";
+} else {
+    prefix = "assets/";
+}
 sprites.cat.addEventListener("load", preload_success)
 sprites.cat.src = prefix + "cat.png";
 sprites.mouse.addEventListener("load", preload_success)
